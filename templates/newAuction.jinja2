@@ -1,0 +1,30 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+    <h1>Create a New Auction Group</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.auction_name.label }}<br>
+            {{ form.auction_name(size=32) }}<br>
+            {% for error in form.auction_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.code.label }}<br>
+            {{ form.code(size=32) }}<br>
+            {% for error in form.code.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.code2.label }}<br>
+            {{ form.code2(size=32) }}<br>
+            {% for error in form.code2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

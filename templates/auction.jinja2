@@ -1,0 +1,136 @@
+{% extends 'base.jinja2' %}
+
+
+{% block content %}
+<div class="columns">
+    <div class="column">
+        <h1>Welcome to the {{ auction.auction_name }} Auction</h1><br>
+        {% if team %}<p>Current High Bid for {{ team }} is {{ high_bid }} by {{ leader }}.</p>{% endif %}
+        {% if error %}<span class="error">{{ error }}<br><br>{% endif %}
+        {% if not finished %}
+        <form id="start">
+            <div class="field">
+                <input type="submit" value="Start Auction" onclick="style.display = 'none'">
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="column">
+        <div id="time"></div>
+    </div>
+</div>
+
+<div class="columns">
+    <div class="column">
+        <form id="bid-form">
+            <div class="field">
+                <label for="name-input" class="label">Your Name: </label>
+                <div class="control">
+                    <input id="name-input" name="name" class="input" type="text" value={{ current_user.username }} readonly required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="amount-input" class="label">Your Bid: </label>
+                <div class="control">
+                    <input id="amount-input" name="bid" type="number" placeholder="Enter your bid here" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="auction-input" class="label">Your Auction: </label>
+                <div class="control">
+                    <input id="auction-input" name="auction" type="text" value={{ auction.auction_name }} required readonly>
+                </div>
+            </div>
+
+            <div class="field">
+                <input id="btn" type="submit" value="Place Bid">
+            </div>
+        </form>
+    </div>
+
+    <div class="column">
+        <div id="bid-list"></div>
+    </div>
+</div>
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <script>
+        // configure pusher
+        const pusher = new Pusher('162355e8decc1f5cd0a7', {
+          cluster: 'us2', // gotten from Pusher app dashboard
+          encrypted: true // optional
+        });
+        // subscribe to `auction` public channel
+        const channel = pusher.subscribe('{{ auction.auction_name }}');
+
+        channel.bind('bid-added', data => {
+          appendToList(data);
+        });
+
+        const form = document.querySelector('#bid-form');
+
+        // makes POST request to store blog post on form submit
+        form.onsubmit = e => {
+          e.preventDefault();
+          fetch("/bid", {
+            method: 'POST',
+            body: new FormData(form)
+          })
+          .then(r => {
+            form.reset();
+          });
+        }
+
+        const start = document.querySelector('#start');
+
+        // makes POST request to start timer
+        start.onsubmit = e => {
+          e.preventDefault();
+          fetch("/start/{{ auction.auction_name }}", {
+            method: 'POST',
+            body: new FormData(start)
+          })
+          .then(r => {
+            start.reset();
+          });
+        }
+
+        function appendToList(data) {
+          const html = `
+            <div class="card" id="${data.id}">
+              <header class="card-header">
+                <p class="card-header-title">${data.bidder}</p>
+              </header>
+              <div class="card-content">
+                <div class="content">
+                  <p>${data.bid_amt}</p>
+                </div>
+              </div>
+            </div>`;
+          let list = document.querySelector("#bid-list")
+          list.innerHTML = html + list.innerHTML;
+        };
+
+        channel.bind('timing', data => {
+          countdown(data);
+        });
+
+        function countdown(data) {
+          const html = `
+            <div class="card" id="${data.id}">
+              <header class="card-header">
+                <p class="card-header-title">Time Left:</p>
+              </header>
+              <div class="card-content">
+                <div class="content">
+                  <p>${data.time_remaining} seconds!</p>
+                </div>
+              </div>
+            </div>`;
+          let list = document.querySelector("#time")
+          list.innerHTML = html;
+        };
+    </script>
+{% endblock content %}

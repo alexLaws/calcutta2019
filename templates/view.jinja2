@@ -1,0 +1,14 @@
+{% extends 'base.jinja2' %}
+
+{% block subtitle %}All Bids{% endblock subtitle %}
+
+{% block content %}
+{% for team in all_teams %}
+    <p>Here are all the bids for {{ team.team }}:</p>
+    <ul>
+        {% for bid in bids %}
+            <li><b>{{ bid.participant }}</b>: {{ bid.bid_amount }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+{% endblock content %}

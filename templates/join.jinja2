@@ -1,0 +1,25 @@
+{% extends 'base.jinja2' %}
+
+{% block subtitle %}Join a new Auction!{% endblock subtitle %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.auction_name.label }}<br>
+            {{ form.auction_name(size=32) }}<br>
+            {% for error in form.auction_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.code.label }}<br>
+            {{ form.code(size=32) }}<br>
+            {% for error in form.code.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+        <p>Want to make a new auction? <a href="{{ url_for('new_auction') }}">Click Here!</a></p>
+    </form>
+{% endblock content %}

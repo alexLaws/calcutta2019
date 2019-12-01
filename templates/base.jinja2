@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Crapcutta</title>
+<!-- import Bulma CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
+<!-- custom styles -->
+<style>
+    #bid-list .card {
+        margin-bottom: 10px;
+    }
+    #bid-list .card.deactivated {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+</head>
+<body>
+    <nav>
+        <a id="home" href="{{url_for('home') }}">Home</a>
+        {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Sign Up!</a>
+        {% else %}
+        <a href="{{url_for('user', username=current_user.username) }}">My Auctions</a>
+        <a href="{{ url_for('new_auction') }}">New Auction</a>     
+        <a href="{{ url_for('join') }}">Join Auction</a>      
+        <a href="{{ url_for('logout') }}">Logout</a>      
+        {% endif %}
+    </nav>
+	<h1>Calcutta 2019</h1>
+    <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+	<h2>{% block subtitle %} {% endblock subtitle %}</h2>
+	{% block content %} {% endblock content %}
+</body>
+</html>

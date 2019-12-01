@@ -1,0 +1,10 @@
+{% extends 'base.jinja2' %}
+
+{% block content %}
+    <h1>Auctions for {{ user.first_name }} {{ user.last_name }}:</h1>
+    {% for auction in auctions %}
+    <p>
+        <a href="{{url_for('auction', auction_name=auction.auction.auction_name) }}">{{ auction.auction.auction_name }}</a>
+    </p>
+    {% endfor %}
+{% endblock %}
